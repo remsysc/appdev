@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  laravel-api:
+    build:
+      context: ./module1/api-project
+      dockerfile: Dockerfile
+    # Overriding the default php-fpm command to use artisan serve for easy testing over HTTP
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_CONNECTION=sqlite
+      - AI_SERVICE_URL=http://ai-service:8001/predict
+    # Link the AI service so Laravel can resolve the hostname
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  ai-service:
+    build:
+      context: ./module3/lab2
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
